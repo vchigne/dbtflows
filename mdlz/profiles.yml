@@ -1,0 +1,19 @@
+mdlz:
+  outputs:
+    dev:
+      type: duckdb
+      path: ":memory:"
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        # Configuraciones generales
+        s3_region: "us-east-1"
+        s3_endpoint: "51.79.79.6:9000"
+        s3_use_ssl: "false"
+        s3_url_style: "path"
+        # Credenciales - nótese que están dentro de settings, no en secrets
+        s3_access_key_id: "3sNmVVPCnCe8K4vsa66G"
+        s3_secret_access_key: "jPc1VRq9zLKpoYHrumvYPzroXBJDai5jbg47qwwj"
+  target: dev

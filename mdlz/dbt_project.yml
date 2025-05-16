@@ -1,0 +1,37 @@
+name: 'mdlz_transform'
+version: '1.0.0'
+config-version: 2
+
+profile: 'mdlz'
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+
+vars:
+  # UUID como variable directa
+  uuid_prefix: "9111215b-1f8c-4b16-9d4f-22a63b456300"  # UUID explícito aquí
+  source_bucket: "sagebackup"
+  source_path: "data/parquet"
+  target_bucket: "sagebackup"
+  target_path: "data/processed"
+
+models:
+  mdlz_transform:
+    staging:
+      +materialized: table
+      +schema: staging
+      +tags: ["raw", "parquet"]
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+      +tags: ["intermediate"]
+    marts:
+      +materialized: table
+      +schema: marts
+      +tags: ["transformed"]
+      master:
+        +tags: ["master"]
+      transactional:
+        +tags: ["transactional"]
