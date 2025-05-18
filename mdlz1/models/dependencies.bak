@@ -1,0 +1,167 @@
+version: 2
+
+models:
+  # Definir dependencias para asegurar el orden correcto de ejecución
+  
+  # Modelos raw dependen del UUID proporcionado
+  - name: raw_clientes
+    description: "Importación de datos de clientes desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_pedidos
+    description: "Importación de datos de pedidos desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_productos
+    description: "Importación de datos de productos desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_rutas
+    description: "Importación de datos de rutas desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_stock
+    description: "Importación de datos de stock desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_vendedores
+    description: "Importación de datos de vendedores desde archivo Parquet"
+    config:
+      tags: ['raw']
+      
+  - name: raw_ventas
+    description: "Importación de datos de ventas desde archivo Parquet"
+    config:
+      tags: ['raw']
+
+  # Modelos transform dependen de los modelos raw
+  - name: transform_clientes
+    description: "Transformación de datos de clientes"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_clientes')
+
+  - name: transform_pedidos
+    description: "Transformación de datos de pedidos"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_pedidos')
+
+  - name: transform_productos
+    description: "Transformación de datos de productos"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_productos')
+
+  - name: transform_rutas
+    description: "Transformación de datos de rutas"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_rutas')
+
+  - name: transform_stock
+    description: "Transformación de datos de stock"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_stock')
+
+  - name: transform_vendedores
+    description: "Transformación de datos de vendedores"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_vendedores')
+
+  - name: transform_ventas
+    description: "Transformación de datos de ventas"
+    config:
+      tags: ['transform']
+    depends_on:
+      - ref('raw_ventas')
+  
+  # Inicialización de base de datos de staging
+  - name: init_staging
+    description: "Inicializa la conexión a la base de datos de staging"
+    config:
+      tags: ['staging']
+      
+  # Modelos staging dependen de los modelos transform y de init_staging
+  - name: stg_clientes
+    description: "Carga datos de clientes a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_clientes')
+      - ref('init_staging')
+
+  - name: stg_pedidos
+    description: "Carga datos de pedidos a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_pedidos')
+      - ref('init_staging')
+
+  - name: stg_productos
+    description: "Carga datos de productos a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_productos')
+      - ref('init_staging')
+
+  - name: stg_rutas
+    description: "Carga datos de rutas a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_rutas')
+      - ref('init_staging')
+
+  - name: stg_stock
+    description: "Carga datos de stock a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_stock')
+      - ref('init_staging')
+
+  - name: stg_vendedores
+    description: "Carga datos de vendedores a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_vendedores')
+      - ref('init_staging')
+
+  - name: stg_ventas
+    description: "Carga datos de ventas a la base de datos de staging"
+    config:
+      tags: ['staging']
+    depends_on:
+      - ref('transform_ventas')
+      - ref('init_staging')
+      
+  # Resumen depende de todos los modelos staging
+  - name: stg_summary
+    description: "Genera un resumen del proceso y verifica integridad"
+    config:
+      tags: ['summary']
+    depends_on:
+      - ref('stg_clientes')
+      - ref('stg_pedidos')
+      - ref('stg_productos')
+      - ref('stg_rutas')
+      - ref('stg_stock')
+      - ref('stg_vendedores')
+      - ref('stg_ventas')
