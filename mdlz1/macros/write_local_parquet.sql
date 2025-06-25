@@ -14,6 +14,7 @@
         TO '{{ output_path }}' (
             FORMAT PARQUET,
             PARTITION_BY ({{ partition_by }}),
+            OVERWRITE_OR_IGNORE,
             ROW_GROUP_SIZE 100000,
             COMPRESSION 'ZSTD'
         )
